@@ -1,8 +1,23 @@
-var ground,bat,batman,bat_running,canvas,power_img,power,bat_jump,bg,back,star_img,star,coin_img,coin;
+var ground,ground_img,bat,batman,bat_running,canvas,power_img,power,bat_jump,bg,back,star_img,star,coin_img,coin;
 var car_img, batarang_img, Obstacle;
-var starGroup,coinGroup,batarangGroup,ObstaclesGroup,carsGroup
+var starGroup,coinGroup1,coinGroup2,coinGroup3,coinGroup4,coinGroup5,batarangGroup,ObstaclesGroup,carsGroup,powersGroup
 var score=0;
-var lives=3;
+var lives=1;
+
+var READY=1;
+var PLAY=1;
+var END=0;
+var gameState=PLAY;
+var reset,reset_img
+
+//var gamestate=READY;
+//var READY=0
+
+var play,play_img;
+var gameOver,game_img;
+
+
+var coiny;
 
 
 function preload(){
@@ -26,6 +41,15 @@ function preload(){
 
   Obstacle = loadImage("images/ob1.png");
 
+  ground_img=loadImage("images/ground1.png");
+  //play_img=loadImage("images/play.png")
+
+  reset_img=loadImage("images/restart2.png");
+
+  //ground_img=loadImage("images/ground2.png");
+
+  game_img=loadImage("images/game_over.png")
+
 }
 
 
@@ -33,69 +57,143 @@ function preload(){
 function setup() {
   canvas = createCanvas(1800,800);
 
+
+  
+  
+  //play=createSprite(900,400, 100, 100);
+  //play.shapeColor = "red";
+
   back=createSprite(900,400,1800,800);
    back.x=back.width/2;
    //back.velocityX=-2;
    back.addImage(bg);
    back.scale=2;
-  batman= createSprite(110,415,20,50);
+  batman= createSprite(110,660,20,50);
   batman.addImage("standing", bat);
   batman.addAnimation("running",bat_running);
   batman.addImage("jumping", bat_jump);
   batman.scale = 0.59;
   //batman.addImage("car",car_img);
 
-  ground=createSprite(500,570,4400,20);
+  ground=createSprite(900,750,1800,20);
   ground.x = ground.width /2;
- // ground.addImage(g_img)
+ // ground.addImage(ground_img);
+  //ground.scale=0.3
   //ground.velocityX = -2;
   ground.visible=true;
 
   starGroup=new Group();
-  coinGroup=new Group();
+
+  coinGroup1=new Group();
+  coinGroup2=new Group();
+  coinGroup3=new Group();
+  coinGroup4=new Group();
+  coinGroup5=new Group();
+
   batarangGroup=new Group();
   obstaclesGroup=new Group();
   carsGroup=new Group();
+  powersGroup=new Group();
+
+  //play=createSprite(900,400, 100, 100);
+  //play.shapeColor = "red";
+  //play.addImage("play",play_img)
+
+  gameOver=createSprite(900,300);
+  gameOver.addImage("game",game_img)
+
+  reset=createSprite(900,660);
+  reset.addImage(reset_img)
+
 
 }
 
 function draw() {
   background(255);  
-
-
+  //back.visible=false
+  //batman.visible=false
  
-  if(batman.isTouching(coinGroup)){
-    coinGroup.destroyEach();
-    score=score+1; 
-   
-   if(coinGroup.isTouching(batman)){
-  coinGroup.destroyEach();
+  /*if(gameState===READY){
+    
+    //batman.velocityX=0;
+    //batman.velocityY=0;
 
-   score=score+1   
-   }
+   if(mousePressedOver(play)){
+      gameState=PLAY;
+      play.visible=false;
+     back.visible=true
+    batman.visible=true
+    }
+  }
+  */
+  
+
+  if(gameState===PLAY){
+    back.visible=true
+    batman.visible=true
+    gameOver.visible=false
+    ground.visible=true
+  batarangGroup.setVisibleEach(true)
+  powersGroup.setVisibleEach(true)
+  carsGroup.setVisibleEach(true)
+  obstaclesGroup.setVisibleEach(true)
+  starGroup.setVisibleEach(true)
+  coinGroup1.setVisibleEach(true)
+  coinGroup2.setVisibleEach(true)
+  coinGroup3.setVisibleEach(true)
+  coinGroup4.setVisibleEach(true)
+  coinGroup5.setVisibleEach(true)
+    reset.visible=false
+    
+    coiny = Math.round(random(200,550));
+  spawnCoin1();
+  spawnCoin2();
+  spawnCoin3();
+  spawnCoin4();
+  spawnCoin5();
+ 
+  if(batman.isTouching(coinGroup1)){
+    coinGroup1.destroyEach();
+    score=score+1; 
+    //playSound("ouch.")
+  }
+  if(batman.isTouching(coinGroup2)){
+    coinGroup2.destroyEach();
+    score=score+1; 
+    //playSound("ouch.")
+  }
+  if(batman.isTouching(coinGroup3)){
+    coinGroup3.destroyEach();
+    score=score+1; 
+    //playSound("ouch.")
+  }
+  if(batman.isTouching(coinGroup4)){
+    coinGroup4.destroyEach();
+    score=score+1; 
+    //playSound("ouch.")
+  }
+  if(batman.isTouching(coinGroup5)){
+    coinGroup5.destroyEach();
+    score=score+1; 
+    //playSound("ouch.")
   }
 
   if(batman.isTouching(obstaclesGroup)){
     obstaclesGroup.destroyEach();
     lives=lives-1; 
+    //obstaclesGroup=playSound("sounds/ouch.ogg")
    
-   if(obstaclesGroup.isTouching(batman)){
-    obstaclesGroup.destroyEach();
-
-   lives=lives-1   
-   }
+  
   }
 
   if(batman.isTouching(starGroup)){
     starGroup.destroyEach();
     lives=lives-1; 
-   
-   if(starGroup.isTouching(batman)){
-    starGroup.destroyEach();
+    //starGroup=playSound("sounds/ouch.ogg")
 
-   lives=lives-1   
-   }
+  
   }
+
 
   back.velocityX=0;
   batman.changeAnimation("standing", bat);
@@ -104,18 +202,18 @@ function draw() {
 
   //Batman jumps & changes animation
   if(keyDown("up") &&  batman.isTouching(ground)){
-    batman.velocityY=-23;
+    batman.velocityY=-28;
     batman.changeAnimation("jumping", bat_jump);
     batman.scale=1.1;
   }
   if(keyDown("right")){
-    back.velocityX=-15;
+    back.velocityX=-30;
     batman.changeAnimation("running",bat_running);
     batman.scale=1.1;
   }
 
   if(keyDown("left")){
-    back.velocityX=15;
+    back.velocityX=30;
     batman.changeAnimation("running",bat_running);
     batman.scale=1.1;
   }
@@ -133,18 +231,116 @@ function draw() {
   //console.log(batman.y);
 
   //When batman is in air, looks like jumping
-  if(batman.y<412){
+  if(batman.y<615){
     batman.changeAnimation("jumping", bat_jump);
     batman.scale=1.1;
   }
 
   spawnStar();
-  spawnCoin();
+
   spawnBat();
   spawnObstacles();
   spawnCar();
+  spawnPower();
 
   batman.velocityY=batman.velocityY+0.8;
+ // reset.visible=true;
+
+
+  if(lives===0){
+    gameState=END;
+    
+  }
+  }
+
+  if(gameState===END){
+ back.visible=false
+  batman.visible=false
+  ground.visible=false
+  batarangGroup.setVisibleEach(false)
+  powersGroup.setVisibleEach(false)
+  carsGroup.setVisibleEach(false)
+  obstaclesGroup.setVisibleEach(false)
+  starGroup.setVisibleEach(false)
+  coinGroup1.setVisibleEach(false)
+  coinGroup2.setVisibleEach(false)
+  coinGroup3.setVisibleEach(false)
+  coinGroup4.setVisibleEach(false)
+  coinGroup5.setVisibleEach(false)
+  //gameOver=playSound(gameover.mp3)
+
+  
+  gameOver.visible=true
+  reset.visible=true
+
+
+    reset.addImage(reset_img)
+    reset.scale=0.7
+  gameOver.addImage("game",game_img);
+    batman.changeAnimation("standing",bat);
+    batman.scale=0.5;
+    batman.velocityX=0;
+    batman.velocityY=0;
+    back.velocityX=0;
+    starGroup.setLifetimeEach(-1);
+    obstaclesGroup.setLifetimeEach(-1);
+    coinGroup1.setLifetimeEach(-1);
+    coinGroup2.setLifetimeEach(-1);
+    coinGroup3.setLifetimeEach(-1);
+    coinGroup4.setLifetimeEach(-1);
+    coinGroup5.setLifetimeEach(-1);
+    batarangGroup.setLifetimeEach(-1);
+    carsGroup.setLifetimeEach(-1);
+    powersGroup.setLifetimeEach(-1);
+    starGroup.setVelocityXEach(0);
+    obstaclesGroup.setVelocityXEach(0);
+    coinGroup1.setVelocityXEach(0);
+    coinGroup2.setVelocityXEach(0);
+    coinGroup3.setVelocityXEach(0);
+    coinGroup4.setVelocityXEach(0);
+    coinGroup5.setVelocityXEach(0);
+    carsGroup.setVelocityXEach(0);
+    batarangGroup.setVelocityXEach(0);
+    powersGroup.setVelocityXEach(0);
+
+    if(mousePressedOver(reset)){
+      gameState=PLAY;
+      reset.visible=false;
+      //back.visible=true
+    //batman.visible=true
+    //lives=5
+    
+    back.visible=true
+    batman.visible=true
+    gameOver.visible=false
+    ground.visible=true
+  batarangGroup.setVisibleEach(true)
+  powersGroup.setVisibleEach(true)
+  carsGroup.setVisibleEach(true)
+  obstaclesGroup.setVisibleEach(true)
+  starGroup.setVisibleEach(true)
+  coinGroup1.setVisibleEach(true)
+  coinGroup2.setVisibleEach(true)
+  coinGroup3.setVisibleEach(true)
+  coinGroup4.setVisibleEach(true)
+  coinGroup5.setVisibleEach(true)
+   }
+  }
+
+  
+
+  
+
+  //if(lives=0){
+    //obstaclesGroup.velocityX=0;
+    //coinGroup.velocityX=0;
+    //starGroup.velocityX=0;
+    //batarangGroup.velocityX=0;
+    //carsGroup.velocityX=0;
+    //powersGroup.velocityX=0;
+  //}
+
+  
   batman.collide(ground);
   drawSprites();
 
@@ -155,6 +351,10 @@ function draw() {
   fill(255)
   textSize(35)
   text("Lives: "+lives,100,150)
+
+//}
 }
+
+
 
 
