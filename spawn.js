@@ -73,7 +73,7 @@ function spawnCoin5() {
 }
 
 function spawnBat(){
-    if (frameCount % 300 === 0) {
+    if (frameCount % 400 === 0) {
         var batarang = createSprite(1800,700,40,10);
         //batarang.y = Math.round(random(400,500));
         batarang.addImage("batarang",batarang_img);
@@ -108,7 +108,7 @@ function spawnCar(){
 }
 
 function spawnPower(){
-    if (frameCount % 400=== 0) {
+    if (frameCount % 450=== 0) {
         var power = createSprite(1800,700,40,10);
         //power.y = Math.round(random(400,500));
         power.addAnimation("power", power_img);
