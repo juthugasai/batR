@@ -18,6 +18,7 @@ var coinSound;
 var overSound;
 var ouchSound;
 var clickSound;
+var runSound;
 
 
 function preload(){
@@ -57,6 +58,7 @@ function preload(){
   overSound = loadSound("sounds/gameover1.mp3");
   //ouchSound = loadSound("sounds/ouch1.mp3")
   clickSound = loadSound("sounds/press.mp3")
+  //runSound = loadSound("sounds/run2.mp3");
 
 }
 
@@ -216,6 +218,7 @@ function draw() {
       back.velocityX=-30;
       batman.changeAnimation("running",bat_running);
       batman.scale=1.1;
+      //runSound.play()
     }
 
     if(keyDown("left")){
